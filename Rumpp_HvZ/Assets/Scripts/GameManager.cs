@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         zombies = new List<GameObject>();
         terrain.terrainData.size = new Vector3(20, 1, 20);
         psgs.Add(Instantiate(treasure, new Vector3(Random.Range(0, terrain.terrainData.size.x), .5f,  Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
-        psgs.Add(Instantiate(treasure, new Vector3(terrain.terrainData.size.x /2, -1,terrain.terrainData.size.z), Quaternion.identity));
+        psgs.Add(Instantiate(treasure, new Vector3(terrain.terrainData.size.x /2, -1, terrain.terrainData.size.z / 2), Quaternion.identity));
         for (int i = 0; i < 5; i++)
         {
             humans.Add(Instantiate(human, new Vector3(Random.Range(0, terrain.terrainData.size.x), human.GetComponent<BoxCollider>().size.y / 2, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));

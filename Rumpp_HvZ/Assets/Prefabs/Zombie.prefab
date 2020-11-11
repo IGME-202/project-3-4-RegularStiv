@@ -115,4 +115,4 @@ MonoBehaviour:
   radius: 2
   maxSpeed: 6
   minSpeed: 1
-  maxForce: 10
+  maxForce: 20
