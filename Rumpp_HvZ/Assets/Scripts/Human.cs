@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class Human : Vehicle
 {
-    // fix camera glitch
+    // zombie object
     public GameObject zombie;
     protected override void ClacSteeringForce()
     {
+        // sets the zombie object
         GameObject targetZombie = GameManager.zombies[0];
         float distance = 100;
+        //compares the distance of all the zombies and runs from the closest one 
         for (int i = 0; i < GameManager.zombies.Count; i++)
         {
             if (Vector3.Distance(gameObject.transform.position, GameManager.zombies[i].transform.position) < distance)
@@ -18,8 +20,9 @@ public class Human : Vehicle
                 targetZombie = GameManager.zombies[i];
             }
         }
-        Vector3 uForce = Vector3.zero;
 
+        Vector3 uForce = Vector3.zero;
+        // adds all forces clamps them and applies the force 
         for (int i = 0; i < GameManager.psgs.Count; i++)
         {
             uForce += Seek(GameManager.psgs[i]);
@@ -30,6 +33,8 @@ public class Human : Vehicle
         uForce.y = 0;
         ApplyForce(uForce);
     }
+    
+    // if the zombies hit the humans they convert by being added to the list of zombies and are destroyed
     public void Convert()
     {
         GameManager.zombies.Add(Instantiate(zombie, new Vector3(gameObject.transform.position.x, zombie.GetComponent<BoxCollider>().size.y / 2, gameObject.transform.position.z), Quaternion.identity));
@@ -40,11 +45,12 @@ public class Human : Vehicle
     protected override void Update()
     {
         base.Update();
-
+        //checks collisions between the treasure and human
         if (Vector3.Distance(position, GameManager.psgs[0].transform.position) < radius)
         {
             GameManager.psgs[0].GetComponent<Treasure>().OnGrab();
         }
+        // collisions between humans and zombies 
         for (int i = 0; i < GameManager.zombies.Count; i++)
         {
             if (Vector3.Distance(position, GameManager.zombies[i].transform.position) < radius)
@@ -54,6 +60,8 @@ public class Human : Vehicle
             }
         }
     }
+
+    // debug lines
     protected override void OnRenderObject()
     {
         base.OnRenderObject();

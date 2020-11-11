@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    // public objects
     public GameObject human;
     public GameObject zombie;
     public GameObject treasure;
     public Terrain terrain;
 
+    //lists 
     public static List<GameObject> psgs;
     public static List<GameObject> humans;
     public static List<GameObject> zombies;
@@ -16,6 +18,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        //initializes all objects and lists
         psgs = new List<GameObject>();
         humans = new List<GameObject>();
         zombies = new List<GameObject>();

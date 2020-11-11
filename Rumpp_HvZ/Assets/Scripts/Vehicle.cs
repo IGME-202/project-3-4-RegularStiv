@@ -4,17 +4,19 @@ using UnityEngine;
 
 public abstract class Vehicle : MonoBehaviour
 {
+    //vectors
     protected Vector3 position;
     protected Vector3 direction;
     protected Vector3 velocity;
     protected Vector3 acceleration;
-
+    //debug materials
     public Material blue;
     public Material black;
     public Material green;
     public Material red;
     public Material purple;
 
+    //speeds and forces
     [Min(0.0001f)]
     public float mass = 1f;
     public float radius = 1f;
@@ -42,11 +44,13 @@ public abstract class Vehicle : MonoBehaviour
         acceleration = Vector3.zero;
     }
 
+    // makes the force applied realistic
     protected void ApplyForce(Vector3 force)
     {
         acceleration += force / mass;
     }
 
+    // debug lines
     protected virtual void OnRenderObject()
     {
         green.SetPass(0);
@@ -60,8 +64,11 @@ public abstract class Vehicle : MonoBehaviour
         GL.Vertex(Quaternion.Euler(0, 90, 0) * velocity.normalized * 2   + transform.position );
         GL.End();
     }
+
     protected abstract void ClacSteeringForce();
 
+    //seek
+    #region
     public Vector3 Seek(Vector3 targetPos)
     {
         Vector3 desiredVelocity = targetPos - position;
@@ -79,7 +86,10 @@ public abstract class Vehicle : MonoBehaviour
     {
         return Seek(obj.transform.position);
     }
+    #endregion
 
+    //flee
+    #region
     public Vector3 Flee(Vector3 targetPos)
     {
         Vector3 desiredVelocity = position - targetPos;
@@ -97,4 +107,5 @@ public abstract class Vehicle : MonoBehaviour
     {
         return Flee(obj.transform.position);
     }
+    #endregion
 }

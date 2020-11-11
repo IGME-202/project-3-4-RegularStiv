@@ -6,6 +6,7 @@ using UnityEngine.Animations;
 public class Zombie : Vehicle
 {
     private GameObject targetHuman;
+    // debug lines 
     protected override void OnRenderObject()
     {
         base.OnRenderObject();
@@ -19,6 +20,7 @@ public class Zombie : Vehicle
         }
 
     }
+    // applies forces to the zombies to move around 
     protected override void ClacSteeringForce()
     {
         if (GameManager.humans.Count == 0)
@@ -39,7 +41,9 @@ public class Zombie : Vehicle
             }
         }
 
+        // center seeking force to keep zombies on terrain
         Vector3 uforce = Seek(GameManager.psgs[1].transform.position);
+
         uforce += Seek(targetHuman);
         uforce = Vector3.ClampMagnitude(uforce, maxForce);
         uforce.y = 0;
