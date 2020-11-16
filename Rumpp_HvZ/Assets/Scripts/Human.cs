@@ -28,7 +28,7 @@ public class Human : Vehicle
             uForce += Seek(GameManager.psgs[i]);
         }
         uForce += Flee(targetZombie);
-
+        uForce += Flee(ObjectAvoidance());
         uForce = Vector3.ClampMagnitude(uForce, maxForce);
         uForce.y = 0;
         ApplyForce(uForce);
@@ -46,9 +46,9 @@ public class Human : Vehicle
     {
         base.Update();
         //checks collisions between the treasure and human
-        if (Vector3.Distance(position, GameManager.psgs[0].transform.position) < radius)
+        if (Vector3.Distance(position, GameManager.psgs[1].transform.position) < radius)
         {
-            GameManager.psgs[0].GetComponent<Treasure>().OnGrab();
+            GameManager.psgs[1].GetComponent<Treasure>().OnGrab();
         }
         // collisions between humans and zombies 
         for (int i = 0; i < GameManager.zombies.Count; i++)
@@ -60,7 +60,10 @@ public class Human : Vehicle
             }
         }
     }
-
+    protected override Vector3 ObjectAvoidance()
+    {
+        return base.ObjectAvoidance();
+    }
     // debug lines
     protected override void OnRenderObject()
     {

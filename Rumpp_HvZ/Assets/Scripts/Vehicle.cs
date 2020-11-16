@@ -9,6 +9,7 @@ public abstract class Vehicle : MonoBehaviour
     protected Vector3 direction;
     protected Vector3 velocity;
     protected Vector3 acceleration;
+    protected List<GameObject> avoidList;
     //debug materials
     public Material blue;
     public Material black;
@@ -28,6 +29,7 @@ public abstract class Vehicle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        avoidList = new List<GameObject>();
         position = transform.position;
         direction = Vector3.right;
         velocity = Vector3.zero;
@@ -66,6 +68,37 @@ public abstract class Vehicle : MonoBehaviour
     }
 
     protected abstract void ClacSteeringForce();
+
+    protected virtual Vector3 ObjectAvoidance()
+    {
+        Vector3 avoidForce = Vector3.zero;
+        Vector3 right = Vector3.Cross(velocity, Vector3.up);
+        avoidList.Clear();
+        for (int i = 0; i < GameManager.obstacles.Count; i++)
+        {
+            Vector3 toOther = GameManager.obstacles[i].transform.position - transform.position;
+            float dot = Vector3.Dot(velocity, toOther);
+            if (dot >= 0)
+            {
+                if (Vector3.Distance(GameManager.obstacles[i].transform.position, transform.position) < 4 + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
+                {
+                    dot = Vector3.Dot(right, toOther);
+                    if (Mathf.Abs(dot) <= radius + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
+                    {
+                        if (dot >= 0)
+                        {
+                            avoidForce += -avoidForce.normalized * maxSpeed;
+                        }
+                        else
+                        {
+                            avoidForce += avoidForce.normalized * maxSpeed;
+                        }
+                    }
+                }
+            }
+        }
+        return avoidForce;
+    }
 
     //seek
     #region

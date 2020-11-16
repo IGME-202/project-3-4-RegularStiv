@@ -43,10 +43,15 @@ public class Zombie : Vehicle
 
         // center seeking force to keep zombies on terrain
         Vector3 uforce = Vector3.zero;
-        uforce += Seek(GameManager.psgs[1].transform.position / 2);
+        uforce += Seek(GameManager.psgs[0].transform.position);
         uforce += Seek(targetHuman);
+        uforce += Flee(ObjectAvoidance());
         uforce = Vector3.ClampMagnitude(uforce, maxForce);
         uforce.y = 0;
         ApplyForce(uforce);
+    }
+    protected override Vector3 ObjectAvoidance()
+    {
+        return base.ObjectAvoidance();
     }
 }
