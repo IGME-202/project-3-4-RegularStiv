@@ -10,12 +10,14 @@ public abstract class Vehicle : MonoBehaviour
     protected Vector3 velocity;
     protected Vector3 acceleration;
     protected List<GameObject> avoidList;
+    public TerrainData terrain;
     //debug materials
     public Material blue;
     public Material black;
     public Material green;
     public Material red;
     public Material purple;
+
 
     //speeds and forces
     [Min(0.0001f)]
@@ -24,6 +26,8 @@ public abstract class Vehicle : MonoBehaviour
     public float maxSpeed = 1f;
     public float minSpeed = 1f;
     public float maxForce = 5f;
+    public float avoidanceForce = 2f;
+    public float terrainRadius = 7.5f;
 
 
     // Start is called before the first frame update
@@ -63,7 +67,7 @@ public abstract class Vehicle : MonoBehaviour
         blue.SetPass(0);
         GL.Begin(GL.LINES);
         GL.Vertex(transform.position);
-        GL.Vertex(Quaternion.Euler(0, 90, 0) * velocity.normalized * 2   + transform.position );
+        GL.Vertex(Quaternion.Euler(0, 90, 0) * velocity.normalized * 2 + transform.position);
         GL.End();
     }
 
@@ -73,6 +77,7 @@ public abstract class Vehicle : MonoBehaviour
     {
         Vector3 avoidForce = Vector3.zero;
         Vector3 right = Vector3.Cross(velocity, Vector3.up);
+        Vector3 distance = new Vector3(1000, 1000, 1000);
         avoidList.Clear();
         for (int i = 0; i < GameManager.obstacles.Count; i++)
         {
@@ -85,19 +90,32 @@ public abstract class Vehicle : MonoBehaviour
                     dot = Vector3.Dot(right, toOther);
                     if (Mathf.Abs(dot) <= radius + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
                     {
+                        avoidList.Add(GameManager.obstacles[i]);
                         if (dot >= 0)
                         {
-                            avoidForce += -avoidForce.normalized * maxSpeed;
+                            avoidForce += -right.normalized * maxSpeed;
                         }
                         else
                         {
-                            avoidForce += avoidForce.normalized * maxSpeed;
+                            avoidForce += right.normalized * maxSpeed;
                         }
                     }
                 }
             }
         }
+        if (avoidForce != Vector3.zero)
+        {
+            Debug.Log(avoidForce);
+        }
         return avoidForce;
+    }
+
+    public void ApplyFriction(float coeff)
+    {
+        Vector3 friction = velocity * -1;
+        friction.Normalize();
+        friction = friction * coeff;
+        acceleration += friction;
     }
 
     //seek

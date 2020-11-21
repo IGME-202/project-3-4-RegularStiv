@@ -405,6 +405,8 @@ MonoBehaviour:
   zombie: {fileID: 4787373112577530223, guid: 293136816943ab74390ac609bb882012, type: 3}
   treasure: {fileID: 8154813512757651779, guid: f832b6e6ba0f9b84785df20c1d6133e5,
     type: 3}
+  obstacle: {fileID: 4328181130288959500, guid: 3e69608289f16dd4cbf354e750aca062,
+    type: 3}
   terrain: {fileID: 499621881}
 --- !u!4 &1019627836
 Transform:

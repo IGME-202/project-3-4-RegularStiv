@@ -20,24 +20,40 @@ public class Human : Vehicle
                 targetZombie = GameManager.zombies[i];
             }
         }
-
         Vector3 uForce = Vector3.zero;
-        // adds all forces clamps them and applies the force 
-        for (int i = 0; i < GameManager.psgs.Count; i++)
+
+        if (transform.position.x > terrainRadius)
         {
-            uForce += Seek(GameManager.psgs[i]);
+            uForce += Seek(new Vector3(10, 0, 10));
         }
-        uForce += Flee(targetZombie);
-        uForce += Flee(ObjectAvoidance());
-        uForce = Vector3.ClampMagnitude(uForce, maxForce);
+        if (transform.position.x < 2.5)
+        {
+            uForce += Seek(new Vector3(10, 0, 10));
+        }
+        if (transform.position.z > terrainRadius)
+        {
+            uForce += Seek(new Vector3(10, 0, 10));
+        }
+        if (transform.position.z < 2.5)
+        {
+            uForce += Seek(new Vector3(10, 0, 10));
+        }
+        // adds all forces clamps them and applies the force 
+        if (Vector3.Distance(targetZombie.transform.position, gameObject.transform.position) < 6)
+        {
+            uForce += Flee(targetZombie);
+        }
+        uForce += ObjectAvoidance() * avoidanceForce;
         uForce.y = 0;
+        uForce = Vector3.ClampMagnitude(uForce, maxForce);
         ApplyForce(uForce);
+        ApplyFriction(.2f);
     }
     
     // if the zombies hit the humans they convert by being added to the list of zombies and are destroyed
     public void Convert()
     {
-        GameManager.zombies.Add(Instantiate(zombie, new Vector3(gameObject.transform.position.x, zombie.GetComponent<BoxCollider>().size.y / 2, gameObject.transform.position.z), Quaternion.identity));
+        GameManager.zombies.Add(Instantiate(zombie, new Vector3(gameObject.transform.position.x, zombie.GetComponent<BoxCollider>().size.y, gameObject.transform.position.z), Quaternion.identity));
         GameManager.humans.Remove(gameObject);
         Destroy(gameObject);
     }
@@ -45,11 +61,6 @@ public class Human : Vehicle
     protected override void Update()
     {
         base.Update();
-        //checks collisions between the treasure and human
-        if (Vector3.Distance(position, GameManager.psgs[1].transform.position) < radius)
-        {
-            GameManager.psgs[1].GetComponent<Treasure>().OnGrab();
-        }
         // collisions between humans and zombies 
         for (int i = 0; i < GameManager.zombies.Count; i++)
         {
