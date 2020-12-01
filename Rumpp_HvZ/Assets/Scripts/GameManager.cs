@@ -26,18 +26,33 @@ public class GameManager : MonoBehaviour
         terrain.terrainData.size = new Vector3(20, 1, 20);
         for (int i = 0; i < 3; i++)
         {
-            obstacles.Add(Instantiate(obstacle, new Vector3(Random.Range(0, terrain.terrainData.size.x), .5f, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
+            obstacles.Add(Instantiate(obstacle, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
         }
         for (int i = 0; i < 5; i++)
         {
-            humans.Add(Instantiate(human, new Vector3(Random.Range(0, terrain.terrainData.size.x), human.GetComponent<BoxCollider>().size.y / 2, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
+            humans.Add(Instantiate(human, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
         }
-        zombies.Add(Instantiate(zombie, new Vector3(Random.Range(0, terrain.terrainData.size.x), zombie.GetComponent<BoxCollider>().size.y  , Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
+        zombies.Add(Instantiate(zombie, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            GameObject newHuman = Instantiate(human, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity);
+            newHuman.GetComponent<Human>().debugLinesOn = GameManager.zombies[0].GetComponent<Zombie>().debugLinesOn;
+            humans.Add(newHuman);
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            GameObject newZombie = Instantiate(zombie, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity);
+            newZombie.GetComponent<Zombie>().debugLinesOn = GameManager.zombies[0].GetComponent<Zombie>().debugLinesOn;
+            zombies.Add(newZombie);
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            obstacles.Add(Instantiate(obstacle, new Vector3(Random.Range(0, terrain.terrainData.size.x), 0, Random.Range(0, terrain.terrainData.size.z)), Quaternion.identity));
+        }
     }
 }

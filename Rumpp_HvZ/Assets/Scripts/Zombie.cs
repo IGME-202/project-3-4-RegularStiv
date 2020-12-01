@@ -10,12 +10,21 @@ public class Zombie : Vehicle
     protected override void OnRenderObject()
     {
         base.OnRenderObject();
-        if (targetHuman != null)
+        if (targetHuman != null && debugLinesOn)
         {
-            black.SetPass(3);
+            Vector3 debugLocation = transform.position;
+            debugLocation.y = debugLocation.y + 1;
+            black.SetPass(0);
             GL.Begin(GL.LINES);
-            GL.Vertex(gameObject.transform.position);
-            GL.Vertex(targetHuman.transform.position);
+            GL.Vertex(debugLocation);
+            Vector3 chaseTarget = targetHuman.transform.position;
+            chaseTarget.y = chaseTarget.y + 1;
+            GL.Vertex(chaseTarget);
+            GL.End();
+            red.SetPass(0);
+            GL.Begin(GL.LINES);
+            GL.Vertex(debugLocation);
+            GL.Vertex(debugLocation + velocity);
             GL.End();
         }
 
@@ -23,11 +32,35 @@ public class Zombie : Vehicle
     // applies forces to the zombies to move around 
     protected override void ClacSteeringForce()
     {
+        Vector3 uforce = Vector3.zero;
+        for (int i = 0; i < GameManager.zombies.Count; i++)
+        {
+            if (gameObject != GameManager.zombies[i] && AABBCollision(gameObject.GetComponent<BoxCollider>(),GameManager.zombies[i].GetComponent<BoxCollider>()))
+            {
+                uforce += Flee(GameManager.zombies[i]);
+            }
+        }
         if (GameManager.humans.Count == 0)
         {
-            Vector3 wanderForce = new Vector3(Random.Range(-maxForce, maxForce), 0, Random.Range(-maxForce, maxForce));
-            Vector3 uforce = Vector3.zero;
-            uforce += Seek(wanderForce);
+           
+            if (transform.position.x > terrainRadius)
+            {
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
+            }
+            if (transform.position.x < 2.5)
+            {
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
+            }
+            if (transform.position.z > terrainRadius)
+            {
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
+            }
+            if (transform.position.z < 2.5)
+            {
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
+            }
+            uforce += Wander();
+            
             uforce += ObjectAvoidance() * avoidanceForce;
             uforce = Vector3.ClampMagnitude(uforce, maxForce);
             uforce.y = 0;
@@ -45,29 +78,27 @@ public class Zombie : Vehicle
                     targetHuman = GameManager.humans[i];
                 }
             }
-            Vector3 uforce = Vector3.zero;
             if (transform.position.x > terrainRadius)
             {
-                uforce += Seek(new Vector3(10, 0, 10));
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
             }
             if (transform.position.x < 2.5)
             {
-                uforce += Seek(new Vector3(10, 0, 10));
+                uforce += Seek(new Vector3(10, 0, 10))* 1.5f;
             }
             if (transform.position.z > terrainRadius)
             {
-                uforce += Seek(new Vector3(10, 0, 10));
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
             }
             if (transform.position.z < 2.5)
             {
-                uforce += Seek(new Vector3(10, 0, 10));
+                uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
             }
-            uforce += Seek(targetHuman);
+            uforce += Pursue(targetHuman);
             uforce += ObjectAvoidance() * avoidanceForce;
             uforce.y = 0;
             uforce = Vector3.ClampMagnitude(uforce, maxForce);
             ApplyForce(uforce);
-            ApplyFriction(.2f);
         }
         // center seeking force to keep zombies on terrain
         

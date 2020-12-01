@@ -9,8 +9,10 @@ public abstract class Vehicle : MonoBehaviour
     protected Vector3 direction;
     protected Vector3 velocity;
     protected Vector3 acceleration;
+    protected Vector3 wanderTarget;
     protected List<GameObject> avoidList;
     public TerrainData terrain;
+    public bool debugLinesOn = true;
     //debug materials
     public Material blue;
     public Material black;
@@ -26,8 +28,13 @@ public abstract class Vehicle : MonoBehaviour
     public float maxSpeed = 1f;
     public float minSpeed = 1f;
     public float maxForce = 5f;
-    public float avoidanceForce = 2f;
-    public float terrainRadius = 7.5f;
+    public float avoidanceForce = 1f;
+    public float terrainRadius = 17.5f;
+    public float wanderRadius = 2f;
+
+    public float time = 0;
+
+    public int angle;
 
 
     // Start is called before the first frame update
@@ -38,16 +45,23 @@ public abstract class Vehicle : MonoBehaviour
         direction = Vector3.right;
         velocity = Vector3.zero;
         acceleration = Vector3.zero;
+        angle = Random.Range(0, 360);
     }
     // Update is called once per frame
     protected virtual void Update()
     {
         ClacSteeringForce();
+        ApplyFriction(.25f);
         velocity += acceleration * Time.deltaTime;
         position += velocity * Time.deltaTime;
         transform.position = position;
         direction = velocity.normalized;
         acceleration = Vector3.zero;
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            debugLinesOn = !debugLinesOn;
+        }
+        time += Time.deltaTime;
     }
 
     // makes the force applied realistic
@@ -59,16 +73,21 @@ public abstract class Vehicle : MonoBehaviour
     // debug lines
     protected virtual void OnRenderObject()
     {
-        green.SetPass(0);
-        GL.Begin(GL.LINES);
-        GL.Vertex(transform.position);
-        GL.Vertex((velocity * 2 + transform.position));
-        GL.End();
-        blue.SetPass(0);
-        GL.Begin(GL.LINES);
-        GL.Vertex(transform.position);
-        GL.Vertex(Quaternion.Euler(0, 90, 0) * velocity.normalized * 2 + transform.position);
-        GL.End();
+        if (debugLinesOn)
+        {
+            Vector3 debugLocation = transform.position;
+            debugLocation.y = debugLocation.y + 1;
+            green.SetPass(0);
+            GL.Begin(GL.LINES);
+            GL.Vertex(debugLocation);
+            GL.Vertex((direction * 2 + debugLocation));
+            GL.End();
+            blue.SetPass(0);
+            GL.Begin(GL.LINES);
+            GL.Vertex(debugLocation);
+            GL.Vertex(Quaternion.Euler(0, 90, 0) * velocity.normalized * 2 + debugLocation);
+            GL.End();
+        }
     }
 
     protected abstract void ClacSteeringForce();
@@ -85,7 +104,7 @@ public abstract class Vehicle : MonoBehaviour
             float dot = Vector3.Dot(velocity, toOther);
             if (dot >= 0)
             {
-                if (Vector3.Distance(GameManager.obstacles[i].transform.position, transform.position) < 4 + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
+                if (Vector3.Distance(GameManager.obstacles[i].transform.position, transform.position) < 2 + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
                 {
                     dot = Vector3.Dot(right, toOther);
                     if (Mathf.Abs(dot) <= radius + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
@@ -103,10 +122,6 @@ public abstract class Vehicle : MonoBehaviour
                 }
             }
         }
-        if (avoidForce != Vector3.zero)
-        {
-            Debug.Log(avoidForce);
-        }
         return avoidForce;
     }
 
@@ -116,6 +131,34 @@ public abstract class Vehicle : MonoBehaviour
         friction.Normalize();
         friction = friction * coeff;
         acceleration += friction;
+    }
+
+    public static bool AABBCollision(BoxCollider a, BoxCollider b)
+    {
+        if (a.bounds.min.x < b.bounds.max.x && a.bounds.max.x > b.bounds.min.x && a.bounds.max.z > b.bounds.min.z && a.bounds.min.z < b.bounds.max.z)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public Vector3 Wander()
+    {
+        if (time > .5f)
+        {
+            Vector3 distanceAhead = transform.position + velocity;
+            int angleChange = Random.Range(-30, 30);
+            angle += angleChange;
+            Vector3 target = Vector3.zero;
+            target.x = distanceAhead.x + Mathf.Cos(angle) * wanderRadius;
+            target.z = distanceAhead.z + Mathf.Sin(angle) * wanderRadius;
+            time = 0;
+            wanderTarget = target;
+            return Seek(target);
+        }
+        return Seek(wanderTarget);
     }
 
     //seek
@@ -159,4 +202,30 @@ public abstract class Vehicle : MonoBehaviour
         return Flee(obj.transform.position);
     }
     #endregion
+
+    public Vector3 Pursue(GameObject target)
+    {
+        Vector3 distanceBetween = target.transform.position - transform.position;
+
+        float scale = (int)(distanceBetween.magnitude / maxSpeed);
+
+        Vector3 futurePos = target.transform.position + target.GetComponent<Vehicle>().velocity * scale;
+
+        futurePos.y = 0;
+
+        return Seek(futurePos);
+    }
+
+    public Vector3 Evade(GameObject target)
+    {
+        Vector3 distanceBetween = target.transform.position - transform.position;
+
+        int scale = (int)(distanceBetween.magnitude / maxSpeed);
+
+        Vector3 futurePos = target.transform.position + target.GetComponent<Vehicle>().velocity * scale;
+
+        futurePos.y = 0;
+
+        return Flee(futurePos);
+    }
 }

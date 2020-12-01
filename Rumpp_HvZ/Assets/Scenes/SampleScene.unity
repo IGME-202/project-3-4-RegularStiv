@@ -401,11 +401,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6296c80d6c90c6340b5b39057c1e471f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  human: {fileID: 4563411564718549582, guid: c3a3b862318d63841a45696da866628f, type: 3}
-  zombie: {fileID: 4787373112577530223, guid: 293136816943ab74390ac609bb882012, type: 3}
+  human: {fileID: 1358204530018022365, guid: deb84be82016d1b4f8dc554de86975d3, type: 3}
+  zombie: {fileID: 4391023535112981687, guid: 8e9f222a2776d534aa5ce97adb0c66de, type: 3}
   treasure: {fileID: 8154813512757651779, guid: f832b6e6ba0f9b84785df20c1d6133e5,
     type: 3}
-  obstacle: {fileID: 4328181130288959500, guid: 3e69608289f16dd4cbf354e750aca062,
+  obstacle: {fileID: 3835694098322584687, guid: 4dbac4859a7bb54419bda0819c0b22fb,
     type: 3}
   terrain: {fileID: 499621881}
 --- !u!4 &1019627836

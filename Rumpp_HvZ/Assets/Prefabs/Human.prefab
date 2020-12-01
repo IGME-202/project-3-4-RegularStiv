@@ -106,6 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6461cd1e389fbe4eb7369732bb9960e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 0}
   blue: {fileID: 2100000, guid: 170a0a2856b562c4ca0f914cdc73e888, type: 2}
   black: {fileID: 2100000, guid: d9878f9494c062946bafadc30ffb0fdc, type: 2}
   green: {fileID: 2100000, guid: 1e410193e7337ca43a843e688bcabc7e, type: 2}
@@ -116,4 +117,7 @@ MonoBehaviour:
   maxSpeed: 5
   minSpeed: 1
   maxForce: 20
+  avoidanceForce: 2
+  terrainRadius: 17.5
+  wanderRadius: 2
   zombie: {fileID: 4787373112577530223, guid: 293136816943ab74390ac609bb882012, type: 3}

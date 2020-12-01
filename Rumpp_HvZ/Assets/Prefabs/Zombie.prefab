@@ -106,9 +106,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61289053bde3f2746949f15762bd7a8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrain: {fileID: 0}
   blue: {fileID: 2100000, guid: 170a0a2856b562c4ca0f914cdc73e888, type: 2}
   black: {fileID: 2100000, guid: d9878f9494c062946bafadc30ffb0fdc, type: 2}
-  green: {fileID: 2100000, guid: 51019af1cc84b604ab518f671ec9171e, type: 2}
+  green: {fileID: 2100000, guid: 1e410193e7337ca43a843e688bcabc7e, type: 2}
   red: {fileID: 2100000, guid: 7cd915d2868b96b498c54ce005e20dcf, type: 2}
   purple: {fileID: 2100000, guid: 4e779b3f5850f9247952d45f4e177594, type: 2}
   mass: 4
@@ -116,3 +117,6 @@ MonoBehaviour:
   maxSpeed: 4
   minSpeed: 1
   maxForce: 20
+  avoidanceForce: 2
+  terrainRadius: 17.5
+  wanderRadius: 2
