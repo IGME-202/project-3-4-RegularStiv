@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
+    // creates new obsticles and vehicles based on what button is pressed
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))

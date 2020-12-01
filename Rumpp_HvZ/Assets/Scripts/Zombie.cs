@@ -12,6 +12,7 @@ public class Zombie : Vehicle
         base.OnRenderObject();
         if (targetHuman != null && debugLinesOn)
         {
+            // shows the zombies target and future position
             Vector3 debugLocation = transform.position;
             debugLocation.y = debugLocation.y + 1;
             black.SetPass(0);
@@ -42,7 +43,7 @@ public class Zombie : Vehicle
         }
         if (GameManager.humans.Count == 0)
         {
-           
+           // keeps the zombie on the terrain
             if (transform.position.x > terrainRadius)
             {
                 uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
@@ -59,8 +60,9 @@ public class Zombie : Vehicle
             {
                 uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
             }
+            // wanders if there are no humans 
             uforce += Wander();
-            
+            //applies other forces
             uforce += ObjectAvoidance() * avoidanceForce;
             uforce = Vector3.ClampMagnitude(uforce, maxForce);
             uforce.y = 0;
@@ -68,6 +70,7 @@ public class Zombie : Vehicle
         }
         else
         {
+            //finds the closest human 
             targetHuman = GameManager.humans[0];
             float distance = 100;
             for (int i = 0; i < GameManager.humans.Count; i++)
@@ -78,6 +81,7 @@ public class Zombie : Vehicle
                     targetHuman = GameManager.humans[i];
                 }
             }
+            // keeps the zombie on the terrain
             if (transform.position.x > terrainRadius)
             {
                 uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
@@ -94,6 +98,7 @@ public class Zombie : Vehicle
             {
                 uforce += Seek(new Vector3(10, 0, 10)) * 1.5f;
             }
+            // chases human and applies other forces
             uforce += Pursue(targetHuman);
             uforce += ObjectAvoidance() * avoidanceForce;
             uforce.y = 0;

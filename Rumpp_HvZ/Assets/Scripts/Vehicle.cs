@@ -48,6 +48,7 @@ public abstract class Vehicle : MonoBehaviour
         angle = Random.Range(0, 360);
     }
     // Update is called once per frame
+    // applies the forces for the vehicles, keeps track of time and changes the variables dependant on other forces
     protected virtual void Update()
     {
         ClacSteeringForce();
@@ -92,16 +93,19 @@ public abstract class Vehicle : MonoBehaviour
 
     protected abstract void ClacSteeringForce();
 
+    // causes vehicles to be moved away from multiple objects 
     protected virtual Vector3 ObjectAvoidance()
     {
+        //sets up the variables
         Vector3 avoidForce = Vector3.zero;
         Vector3 right = Vector3.Cross(velocity, Vector3.up);
-        Vector3 distance = new Vector3(1000, 1000, 1000);
         avoidList.Clear();
+        //checks every obsticle
         for (int i = 0; i < GameManager.obstacles.Count; i++)
         {
             Vector3 toOther = GameManager.obstacles[i].transform.position - transform.position;
             float dot = Vector3.Dot(velocity, toOther);
+            //checks the dot product and the radius of the obsticle and depending on the value of the dot product it moves left or right if it is in the radius of the obsticle
             if (dot >= 0)
             {
                 if (Vector3.Distance(GameManager.obstacles[i].transform.position, transform.position) < 2 + GameManager.obstacles[i].GetComponent<Obstacle>().radius)
@@ -122,9 +126,11 @@ public abstract class Vehicle : MonoBehaviour
                 }
             }
         }
+        //returns the value
         return avoidForce;
     }
 
+    //applies friction depending on the float put in 
     public void ApplyFriction(float coeff)
     {
         Vector3 friction = velocity * -1;
@@ -133,6 +139,7 @@ public abstract class Vehicle : MonoBehaviour
         acceleration += friction;
     }
 
+    //checks the box colliders on objects and uses aabb collision detection to see of they are in contact with each other
     public static bool AABBCollision(BoxCollider a, BoxCollider b)
     {
         if (a.bounds.min.x < b.bounds.max.x && a.bounds.max.x > b.bounds.min.x && a.bounds.max.z > b.bounds.min.z && a.bounds.min.z < b.bounds.max.z)
@@ -144,6 +151,9 @@ public abstract class Vehicle : MonoBehaviour
             return false;
         }
     }
+
+    // makes a circle in front of vehicle and depending randomness moves around the circle
+    // calls the random event every .5 seconds instead of every frame
     public Vector3 Wander()
     {
         if (time > .5f)
@@ -203,6 +213,7 @@ public abstract class Vehicle : MonoBehaviour
     }
     #endregion
 
+    //pursues the target by chasing the objects future position but if it is close enough to the target it chases the object directly
     public Vector3 Pursue(GameObject target)
     {
         Vector3 distanceBetween = target.transform.position - transform.position;
@@ -216,6 +227,7 @@ public abstract class Vehicle : MonoBehaviour
         return Seek(futurePos);
     }
 
+    //evades the target by avoiding the objects future position but if it is close enough to the target it avoids the object directly
     public Vector3 Evade(GameObject target)
     {
         Vector3 distanceBetween = target.transform.position - transform.position;

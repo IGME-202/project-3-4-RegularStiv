@@ -23,6 +23,7 @@ public class Human : Vehicle
                 targetZombie = GameManager.zombies[i];
             }
         }
+        //pushes the other humans away if colliding 
         for (int i = 0; i < GameManager.humans.Count; i++)
         {
             if (gameObject != GameManager.humans[i] && AABBCollision(gameObject.GetComponent<BoxCollider>(), GameManager.humans[i].GetComponent<BoxCollider>()))
@@ -31,7 +32,7 @@ public class Human : Vehicle
             }
         }
        
-
+        // pushes the object back towards the center of the terrain if it is too close to one side 
         if (transform.position.x > terrainRadius)
         {
             uForce += Seek(new Vector3(10, 0, 10)) * 1.5f;
@@ -48,15 +49,18 @@ public class Human : Vehicle
         {
             uForce += Seek(new Vector3(10, 0, 10)) * 1.5f;
         }
+
         // adds all forces clamps them and applies the force 
         if (Vector3.Distance(targetZombie.transform.position, gameObject.transform.position) < 6)
         {
             uForce += Evade(targetZombie);
         }
+        // wanders if there are no zombies around 
         else
         {
             uForce += Wander();
         }
+        // applies other forces
         uForce += ObjectAvoidance() * avoidanceForce;
         uForce.y = 0;
         uForce = Vector3.ClampMagnitude(uForce, maxForce);
@@ -93,7 +97,7 @@ public class Human : Vehicle
     // debug lines
     protected override void OnRenderObject()
     {
-
+        // shows the future pos as a line
         if (debugLinesOn)
         {
             base.OnRenderObject();
