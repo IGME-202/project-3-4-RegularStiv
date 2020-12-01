@@ -13,7 +13,7 @@
 
 ## User Responsibilities
 
-To make more humans the user can press 'h' on the keyboard and to make more zombies press 'z' on the keyboard. (Above and Beyond)
+To make more humans the user can press 'h' on the keyboard, to make more zombies press 'z' on the keyboard and to make more obsticales press 'o'. (Above and Beyond)
 To toggle the appearance of the debug lines the user can press 'd'.
 
 ## Known Issues
@@ -26,7 +26,9 @@ none
 
 ## Sources
 
-none
+Zombie source - https://www.turbosquid.com/3d-models/free-x-model-zombie/1012761
+Human source - https://www.turbosquid.com/3d-models/3d-model-man-scan-1337683
+tree source - https://www.turbosquid.com/3d-models/3d-tree-trunk-26-1491324
 
 ## Notes
 
